@@ -34,6 +34,7 @@ public class TestNV {
         }
         long endTimeString = System.currentTimeMillis();
         System.out.println("Time voi String: " + (endTimeString - startTimeString) + " ms");
+        System.out.println("Final value of str (length): " + str.length());
 
         //StringBuffer
         long startTimeBuffer = System.currentTimeMillis();
