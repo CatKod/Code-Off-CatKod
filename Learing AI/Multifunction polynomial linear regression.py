@@ -1,49 +1,42 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
-# Tạo dữ liệu ngẫu nhiên: Diện tích (m2), Số phòng ngủ, Số tầng -> Giá nhà (triệu VND)
-np.random.seed(42)  # Đặt seed để tái tạo kết quả
-X_area = np.random.randint(50, 300, size=100)  # Diện tích từ 50 đến 300 m2
-X_rooms = np.random.randint(1, 7, size=100)  # Số phòng ngủ từ 1 đến 6
-X_floors = np.random.randint(1, 4, size=100)  # Số tầng từ 1 đến 3
-X = np.column_stack((X_area, X_rooms, X_floors))  # Kết hợp diện tích, số phòng ngủ và số tầng
+# Load dataset from CSV file
+df = pd.read_csv('test_house_prices.csv')
 
-# Giá nhà được tính dựa trên diện tích, số phòng ngủ, số tầng với một chút nhiễu
-y = 50 * X_area + 200 * X_rooms + 300 * X_floors + np.random.randint(-500, 500, size=100)  # Giá nhà (triệu VND)
+# Preprocess data: Select relevant columns and handle missing values
+df = df[['Vị trí 1', 'Vị trí 2', 'Vị trí 3', 'Vị trí 4']].dropna()
 
-# Chia dữ liệu thành tập huấn luyện và kiểm tra
+# Convert columns to numeric
+df = df.apply(pd.to_numeric, errors='coerce').dropna()
+
+# Define input (X) and output (y)
+X = df[['Vị trí 1', 'Vị trí 2', 'Vị trí 3']]
+y = df['Vị trí 4']
+
+# Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Tạo Polynomial Features (đa thức bậc 2)
+# Apply polynomial transformation
 poly = PolynomialFeatures(degree=2)
 X_train_poly = poly.fit_transform(X_train)
 X_test_poly = poly.transform(X_test)
 
-# Huấn luyện mô hình Linear Regression trên dữ liệu đa thức
+# Train polynomial regression model
 model = LinearRegression()
 model.fit(X_train_poly, y_train)
 
-# Dự đoán trên tập kiểm tra
+# Predict and evaluate
 y_pred = model.predict(X_test_poly)
-
-# Đánh giá mô hình
 mse = mean_squared_error(y_test, y_pred)
-print(f"Mean Squared Error: {mse}")
+print("Mean Squared Error (Polynomial Regression):", mse)
 
-# Hiển thị kết quả dự đoán
-print("Thực tế vs Dự đoán:")
-for actual, predicted in zip(y_test, y_pred):
-    print(f"Thực tế: {actual} triệu, Dự đoán: {predicted:.2f} triệu")
-
-# Vẽ biểu đồ minh họa (chỉ với diện tích để dễ hình dung)
-plt.scatter(X[:, 0], y, color='blue', label='Dữ liệu thực tế')
-plt.scatter(X_test[:, 0], y_pred, color='red', label='Dự đoán')
-plt.xlabel('Diện tích (m2)')
-plt.ylabel('Giá nhà (triệu VND)')
-plt.legend()
-plt.title('Dự đoán giá nhà với Polynomial Regression')
-plt.show()
+# Predict for a new data point
+new_data = np.array([[300000, 150000, 100000]])  # Example input
+new_data_poly = poly.transform(new_data)
+predicted_value = model.predict(new_data_poly)
+print("Predicted Value for new data (Polynomial Regression):", predicted_value[0])
