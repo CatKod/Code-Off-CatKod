@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js Frontend with Python Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .product {
+            border: 1px solid #821212;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script src="/frontend.js" defer></script>
+</head>
+<body>
+    <h1>Data from Python Backend</h1>
+    <div id="data-container">Loading...</div>
+    <script>
+        fetch('/products')
+            .then(response => response.json())
+            .then(products => {
+                const dataContainer = document.getElementById('data-container');
+                dataContainer.innerHTML = ''; // Clear loading text
+                products.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'product';
+                    productDiv.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <h2>${product.name}</h2>
+                        <p>Price: $${product.price}</p>
+                    `;
+                    dataContainer.appendChild(productDiv);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    </script>
+</body>
+</html>
