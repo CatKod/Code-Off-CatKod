@@ -5,7 +5,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 # Load dataset from CSV file
-df = pd.read_csv('test_house_prices.csv')
+df = pd.read_csv('C:/Users/kimvi/OneDrive - Hanoi University of Science and Technology/GitHub/Code-Off-CatKod/Learing AI/test_house_prices.csv')
 
 # Preprocess data: Select relevant columns and handle missing values
 df = df[['Vị trí 1', 'Vị trí 2', 'Vị trí 3', 'Vị trí 4']].dropna()
